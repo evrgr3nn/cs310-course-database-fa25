@@ -4,6 +4,7 @@ import java.sql.*;
 import com.github.cliftonlabs.json_simple.*;
 import java.util.ArrayList;
 
+
 public class DAOUtility {
     
     public static final int TERMID_FA25 = 1;
@@ -15,12 +16,21 @@ public class DAOUtility {
         try {
         
             if (rs != null) {
-
-                // INSERT YOUR CODE HERE
-
+                ResultSetMetaData rsmd = rs.getMetaData();
+                int columnCount = rsmd.getColumnCount();
+                
+                while (rs.next()) {
+                    JsonObject record = new JsonObject();
+                    for (int i = 1; i <= columnCount; i++) {
+                        String column = rsmd.getColumnName(i).toLowerCase(); 
+                        Object value = rs.getObject(i);
+                        record.put(column, (value != null) ? value.toString() : "");
+                    }
+                    records.add(record);
+                }
             }
-            
-        }
+        }       
+        
         catch (Exception e) {
             e.printStackTrace();
         }
